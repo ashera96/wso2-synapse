@@ -26,6 +26,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.synapse.transport.http.conn.ProxyConfig;
 import org.apache.synapse.transport.passthru.config.TargetConfiguration;
 import org.apache.synapse.transport.passthru.connections.TargetConnections;
+import org.apache.synapse.transport.passthru.util.PassThroughTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
@@ -34,6 +35,14 @@ import static org.mockito.Mockito.mock;
  * Test case for DeliveryAgent class
  */
 public class DeliveryAgentTest extends TestCase {
+
+    static {
+        // Ensures conf.location points to the test resources before the PassThroughConfiguration
+        // singleton is initialized; otherwise tests that run later in the same JVM
+        // (e.g. SourceConfigurationTest) read default values and fail depending on test order.
+        PassThroughTestUtils.getPassThroughConfiguration();
+    }
+
     /**
      * This method tests whether the message is queued by the delivery agent when the connection is null
      *
