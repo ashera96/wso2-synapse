@@ -21,17 +21,22 @@ public class SynapseHTTPRequestFactory implements HttpRequestFactory {
 
     private static final String[] RFC2616_SPECIAL_METHODS = {
             "HEAD",
-            "OPTIONS",
             "TRACE",
             "CONNECT"
     };
 
     /**
-     * To provide payload support for HTTP DELETE requests
-     * Since DELETE may/may not contain payload, consider as possible enclosing method
+     * Methods that may or may not carry a request body. DELETE is included to provide payload
+     * support for HTTP DELETE requests. OPTIONS is included because, per RFC 9112 6, message
+     * framing (Content-Length/Transfer-Encoding) is independent of method semantics - a client
+     * may declare a body on OPTIONS even though RFC 9110 9.3.7 defines no use for it - and
+     * framing that body correctly here (the same way DELETE's optional payload already is)
+     * ensures it is read off the wire via httpcore's normal entity-enclosing path instead of
+     * being left unconsumed and misparsed as the start of the next request.
     **/
     private static final String[] RFC2616_POSSIBLE_ENTITY_ENC_METHODS = {
-            "DELETE"
+            "DELETE",
+            "OPTIONS"
     };
 
     public static final String ENDPOINT_URL = "endPointURI";

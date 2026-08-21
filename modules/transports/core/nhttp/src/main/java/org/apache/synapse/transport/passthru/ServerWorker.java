@@ -210,6 +210,22 @@ private WorkerState state;
                     processNonEntityEnclosingRESTHandler(null, msgContext, true);
                 }
             } else {
+                if (request.isEntityEnclosing()) {
+                    // This branch never routes through processEntityEnclosingRequest, so nothing
+                    // else consumes request.getPipe(). For a method with an optional/undefined-use
+                    // body (OPTIONS - RFC 9110 9.3.7 - or DELETE), drain and discard it here, on
+                    // this worker thread, before continuing - blocking here is fine since this is
+                    // a dedicated worker thread, not the reactor thread. Otherwise the Pipe's fixed
+                    // buffer fills for any body larger than it and the producer on the reactor
+                    // thread blocks forever, since no one else will ever read the other end.
+                    msgContext.setProperty(PassThroughConstants.PASS_THROUGH_PIPE, request.getPipe());
+                    try {
+                        RelayUtils.discardMessage(msgContext);
+                    } catch (AxisFault axisFault) {
+                        log.warn("Error while discarding unused request body for " + request.getMethod()
+                                + " " + request.getUri(), axisFault);
+                    }
+                }
                 String contentTypeHeader = request.getHeaders().get(HTTP.CONTENT_TYPE);
                 SOAPEnvelope soapEnvelope = this.handleRESTUrlPost(contentTypeHeader);
                 processNonEntityEnclosingRESTHandler(soapEnvelope, msgContext, true);
