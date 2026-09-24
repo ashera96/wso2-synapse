@@ -509,8 +509,7 @@ public class ScriptMediator extends AbstractMediator {
                 } else if (JAVA_SCRIPT.equals(language) || GRAAL_JAVA_SCRIPT.equals(language)) {
                     jsonObject = ((GraalVMJavaScriptMessageContext) scriptMC).jsonSerializerCallMember("parse", jsonPayload);
                 } else {
-                    String scriptWithJsonParser = "JSON.parse(JSON.stringify(" + jsonPayload + "))";
-                    jsonObject = this.jsEngine.eval('(' + scriptWithJsonParser + ')');
+                    jsonObject = ((CommonScriptMessageContext) scriptMC).jsonSerializerCallMember("parse", jsonPayload);
                 }
             } catch (ScriptException e) {
                 throw new ScriptException("Invalid JSON payload", e.getFileName(), e.getLineNumber(),
@@ -518,7 +517,7 @@ public class ScriptMediator extends AbstractMediator {
             }
         } else if (jsonString != null) {
             String jsonPayload = EIPUtils.tryParseJsonString(jsonParser, jsonString).toString();
-            jsonObject = this.jsEngine.eval('(' + jsonPayload + ')');
+            jsonObject = ((CommonScriptMessageContext) scriptMC).jsonSerializerCallMember("parse", jsonPayload);
         }
         if (jsonObject != null) {
             scriptMC.setJsonObject(synCtx, jsonObject);
