@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.apache.synapse</groupId>
         <artifactId>Apache-Synapse</artifactId>
-        <version>4.1.0-wso2v40.19</version>
+        <version>4.1.0-wso2v40.20-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
