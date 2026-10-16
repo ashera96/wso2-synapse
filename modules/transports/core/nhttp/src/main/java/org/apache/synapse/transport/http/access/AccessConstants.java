@@ -77,6 +77,16 @@ public class AccessConstants {
 
     public static final String CONFIG_ENABLE_LOGGING = "access_log_enable";
 
+    public static final String CONFIG_DISPATCH_MODE = "access_log_dispatch_mode";
+
+    public static final String CONFIG_BATCH_INTERVAL = "access_log_batch_interval";
+
+    public static final String DISPATCH_MODE_BATCH = "batch";
+
+    public static final String DEFAULT_DISPATCH_MODE = "immediate";
+
+    public static final int DEFAULT_BATCH_INTERVAL = 30;
+
 
     public static String getLogPattern() {
         return AccessConfiguration.getInstance().getStringProperty(CONFIG_PATTERN, LOG_PATTERN);
@@ -96,6 +106,15 @@ public class AccessConstants {
 
     public static String getDirectory() {
         return AccessConfiguration.getInstance().getStringProperty(CONFIG_DIRECTORY, DIRECTORY);
+    }
+
+    public static String getDispatchMode() {
+        return AccessConfiguration.getInstance().getStringProperty(CONFIG_DISPATCH_MODE, DEFAULT_DISPATCH_MODE);
+    }
+
+    public static int getBatchInterval() {
+        int interval = AccessConfiguration.getInstance().getIntProperty(CONFIG_BATCH_INTERVAL, DEFAULT_BATCH_INTERVAL);
+        return interval > 0 ? interval : DEFAULT_BATCH_INTERVAL;
     }
 
 }
